@@ -6,44 +6,53 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/home'
-    },
-    {
-      path: '/home',
       name: 'home',
       component: HomeView,
+      meta: { title: '首页' },
     },
     {
-      path: '/list',
-      name: 'list',
-      component: () => import('@/views/ListView.vue')
+      path: '/trade',
+      name: 'trade',
+      component: () => import('@/views/TradeView.vue'),
+      meta: { title: '二手交易' },
     },
     {
-      path: '/detail',
-      name: 'detail',
-      component: () => import('@/views/DetailView.vue')
+      path: '/lost-found',
+      name: 'lost-found',
+      component: () => import('@/views/LostFoundView.vue'),
+      meta: { title: '失物招领' },
+    },
+    {
+      path: '/group-buy',
+      name: 'group-buy',
+      component: () => import('@/views/GroupBuyView.vue'),
+      meta: { title: '拼单搭子' },
+    },
+    {
+      path: '/errand',
+      name: 'errand',
+      component: () => import('@/views/ErrandView.vue'),
+      meta: { title: '跑腿委托' },
     },
     {
       path: '/publish',
       name: 'publish',
-      component: () => import('@/views/PublishView.vue')
+      component: () => import('@/views/PublishView.vue'),
+      meta: { title: '发布信息' },
     },
     {
       path: '/message',
       name: 'message',
-      component: () => import('@/views/MessageView.vue')
+      component: () => import('@/views/MessageView.vue'),
+      meta: { title: '消息中心' },
     },
     {
-      path: '/profile',
-      name: 'profile',
-      component: () => import('@/views/ProfileView.vue')
+      path: '/user',
+      name: 'user',
+      component: () => import('@/views/UserCenterView.vue'),
+      meta: { title: '个人中心' },
     },
-    {
-      path: '/board',
-      name: 'board',
-      component: () => import('@/views/BoardView.vue')
-    }
-  ]
+  ],
 })
 
 export default router
