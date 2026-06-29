@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type { LostFound } from '@/api/lostFound'
 
-defineProps<{
+const props = defineProps<{
   item: LostFound
 }>()
+
+const router = useRouter()
+
+const goToDetail = () => {
+  router.push(`/lost-found/${props.item.id}`)
+}
 
 const getStatusText = (status: string) => {
   const map: Record<string, string> = {
@@ -15,14 +22,23 @@ const getStatusText = (status: string) => {
 </script>
 
 <template>
-  <div class="lost-found-card">
-    <div class="item-badge" :class="item.type">{{ item.type === 'lost' ? '丢失' : '捡到' }}</div>
+  <div class="lost-found-card" @click="goToDetail">
+    <div class="item-badge" :class="item.type">
+      <svg v-if="item.type === 'lost'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
     <div class="item-body">
       <h4>{{ item.title }}</h4>
       <p class="desc">{{ item.description }}</p>
       <div class="item-meta">
-        <span class="info">📍 {{ item.location }}</span>
-        <span class="info">🕐 {{ item.eventTime }}</span>
+        <span class="info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ item.location }}
+        </span>
+        <span class="info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ item.eventTime }}
+        </span>
       </div>
       <div class="item-footer">
         <span class="tag" :class="item.status">{{ getStatusText(item.status) }}</span>
@@ -48,12 +64,12 @@ const getStatusText = (status: string) => {
 }
 
 .item-badge {
-  writing-mode: vertical-lr;
-  padding: 8px 6px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -94,6 +110,14 @@ const getStatusText = (status: string) => {
   color: #bbb;
 }
 
+.info {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  color: #bbb;
+}
+
 .item-footer {
   display: flex;
   justify-content: space-between;
@@ -112,10 +136,5 @@ const getStatusText = (status: string) => {
 .tag.closed {
   background: #f5f5f5;
   color: #999;
-}
-
-.info {
-  font-size: 12px;
-  color: #bbb;
 }
 </style>

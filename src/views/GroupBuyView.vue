@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getGroupBuys, type GroupBuy } from '@/api/groupBuy'
 import GroupBuyCard from '@/components/GroupBuyCard.vue'
 import EmptyState from '@/components/EmptyState.vue'
 
 const items = ref<GroupBuy[]>([])
+const activeCategory = ref('全部')
+const pageSize = 3
+const displayCount = ref(pageSize)
+
+const categories = ['全部', '拼餐', '团购', '出行搭子']
 
 onMounted(async () => {
   try {
@@ -14,6 +19,23 @@ onMounted(async () => {
     items.value = []
   }
 })
+
+const filteredItems = computed(() => {
+  if (activeCategory.value === '全部') return items.value
+  return items.value.filter(item => item.type === activeCategory.value)
+})
+
+const displayedItems = computed(() => {
+  return filteredItems.value.slice(0, displayCount.value)
+})
+
+const hasMore = computed(() => {
+  return displayCount.value < filteredItems.value.length
+})
+
+const loadMore = () => {
+  displayCount.value += pageSize
+}
 </script>
 
 <template>
@@ -21,15 +43,20 @@ onMounted(async () => {
     <h2>拼单搭子</h2>
 
     <div class="category-row">
-      <span class="cat active">全部</span>
-      <span class="cat">美食拼单</span>
-      <span class="cat">学习搭子</span>
-      <span class="cat">运动搭子</span>
-      <span class="cat">出行拼车</span>
+      <span
+        v-for="cat in categories"
+        :key="cat"
+        class="cat"
+        :class="{ active: activeCategory === cat }"
+        @click="activeCategory = cat"
+      >{{ cat }}</span>
     </div>
 
-    <div v-if="items.length > 0" class="group-list">
-      <GroupBuyCard v-for="item in items" :key="item.id" :item="item" />
+    <div v-if="filteredItems.length > 0">
+      <div class="group-list">
+        <GroupBuyCard v-for="item in displayedItems" :key="item.id" :item="item" />
+      </div>
+      <div v-if="hasMore" class="load-more" @click="loadMore">加载更多</div>
     </div>
     <EmptyState v-else text="暂无拼单搭子信息" />
   </div>
@@ -38,6 +65,8 @@ onMounted(async () => {
 <style scoped>
 .group-buy-view {
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 h2 {
@@ -73,5 +102,18 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.load-more {
+  text-align: center;
+  padding: 14px;
+  color: #e8689c;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.load-more:hover {
+  color: #ff9aaf;
 }
 </style>

@@ -17,3 +17,8 @@ export const getErrands = async (): Promise<Errand[]> => {
   const response = await http.get('/errands')
   return response.data
 }
+
+export const getErrandById = async (id: number): Promise<Errand> => {
+  const response = await http.get(`/errands/${id}`)
+  return response.data
+}

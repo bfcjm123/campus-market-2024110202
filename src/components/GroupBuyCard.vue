@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type { GroupBuy } from '@/api/groupBuy'
 
-defineProps<{
+const props = defineProps<{
   item: GroupBuy
 }>()
+
+const router = useRouter()
+
+const goToDetail = () => {
+  router.push(`/group-buy/${props.item.id}`)
+}
 
 const getStatusText = (status: string) => {
   const map: Record<string, string> = {
@@ -15,7 +22,7 @@ const getStatusText = (status: string) => {
 </script>
 
 <template>
-  <div class="group-buy-card">
+  <div class="group-buy-card" @click="goToDetail">
     <div class="group-header">
       <h4>{{ item.title }}</h4>
       <span class="group-tag">{{ item.type }}</span>
@@ -29,7 +36,10 @@ const getStatusText = (status: string) => {
     </div>
     <div class="group-footer">
       <span class="tag" :class="item.status">{{ getStatusText(item.status) }}</span>
-      <span class="info">{{ item.location }} · {{ item.deadline }}</span>
+      <span class="info">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ item.location }}
+      </span>
     </div>
   </div>
 </template>
@@ -125,5 +135,8 @@ const getStatusText = (status: string) => {
 .info {
   font-size: 12px;
   color: #bbb;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 </style>

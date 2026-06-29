@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type { Errand } from '@/api/errand'
 
-defineProps<{
+const props = defineProps<{
   item: Errand
 }>()
+
+const router = useRouter()
+
+const goToDetail = () => {
+  router.push(`/errand/${props.item.id}`)
+}
 
 const getStatusText = (status: string) => {
   const map: Record<string, string> = {
@@ -16,21 +23,30 @@ const getStatusText = (status: string) => {
 </script>
 
 <template>
-  <div class="errand-card">
+  <div class="errand-card" @click="goToDetail">
     <div class="errand-header">
       <h4>{{ item.title }}</h4>
       <span class="reward">¥{{ item.reward }}</span>
     </div>
     <p class="desc">{{ item.description }}</p>
     <div class="errand-route">
-      <span class="route-item">📍 {{ item.from }}</span>
-      <span class="route-arrow">→</span>
-      <span class="route-item">📍 {{ item.to }}</span>
+      <span class="route-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ item.from }}
+      </span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <span class="route-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ item.to }}
+      </span>
     </div>
     <div class="errand-footer">
       <span class="tag">{{ item.taskType }}</span>
       <span class="tag" :class="item.status">{{ getStatusText(item.status) }}</span>
-      <span class="info">截止: {{ item.deadline }}</span>
+      <span class="info">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        {{ item.deadline }}
+      </span>
     </div>
   </div>
 </template>
@@ -86,11 +102,9 @@ const getStatusText = (status: string) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.route-arrow {
-  color: #ddd;
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .errand-footer {
@@ -120,5 +134,8 @@ const getStatusText = (status: string) => {
 .info {
   font-size: 12px;
   color: #bbb;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 </style>

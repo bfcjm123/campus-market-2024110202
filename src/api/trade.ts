@@ -18,3 +18,8 @@ export const getTrades = async (): Promise<Trade[]> => {
   const response = await http.get('/trades')
   return response.data
 }
+
+export const getTradeById = async (id: number): Promise<Trade> => {
+  const response = await http.get(`/trades/${id}`)
+  return response.data
+}

@@ -17,3 +17,8 @@ export const getGroupBuys = async (): Promise<GroupBuy[]> => {
   const response = await http.get('/groupBuys')
   return response.data
 }
+
+export const getGroupBuyById = async (id: number): Promise<GroupBuy> => {
+  const response = await http.get(`/groupBuys/${id}`)
+  return response.data
+}

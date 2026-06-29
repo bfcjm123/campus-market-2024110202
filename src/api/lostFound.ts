@@ -17,3 +17,8 @@ export const getLostFounds = async (): Promise<LostFound[]> => {
   const response = await http.get('/lostFounds')
   return response.data
 }
+
+export const getLostFoundById = async (id: number): Promise<LostFound> => {
+  const response = await http.get(`/lostFounds/${id}`)
+  return response.data
+}

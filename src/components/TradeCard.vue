@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type { Trade } from '@/api/trade'
 
-defineProps<{
+const props = defineProps<{
   trade: Trade
 }>()
+
+const router = useRouter()
+
+const goToDetail = () => {
+  router.push(`/trade/${props.trade.id}`)
+}
 
 const getStatusText = (status: string) => {
   const map: Record<string, string> = {
@@ -16,8 +23,10 @@ const getStatusText = (status: string) => {
 </script>
 
 <template>
-  <div class="trade-card">
-    <div class="trade-img" :style="{ backgroundImage: trade.image ? `url(${trade.image})` : 'none' }"></div>
+  <div class="trade-card" @click="goToDetail">
+    <div class="trade-img" :style="{ backgroundImage: trade.image ? `url(${trade.image})` : 'none' }">
+      <svg v-if="!trade.image" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+    </div>
     <div class="trade-body">
       <div class="trade-header">
         <h4>{{ trade.title }}</h4>
@@ -30,8 +39,14 @@ const getStatusText = (status: string) => {
         <span class="tag" :class="trade.status">{{ getStatusText(trade.status) }}</span>
       </div>
       <div class="trade-footer">
-        <span class="info">{{ trade.publisher }}</span>
-        <span class="info">{{ trade.location }} · {{ trade.publishTime }}</span>
+        <span class="info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {{ trade.publisher }}
+        </span>
+        <span class="info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ trade.location }}
+        </span>
       </div>
     </div>
   </div>
@@ -60,6 +75,9 @@ const getStatusText = (status: string) => {
   flex-shrink: 0;
   background-size: cover;
   background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .trade-body {
@@ -119,5 +137,11 @@ const getStatusText = (status: string) => {
   font-size: 12px;
   color: #bbb;
   margin-top: auto;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 </style>

@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getErrands, type Errand } from '@/api/errand'
 import ErrandCard from '@/components/ErrandCard.vue'
 import EmptyState from '@/components/EmptyState.vue'
 
 const items = ref<Errand[]>([])
 const activeStatus = ref('all')
+const pageSize = 3
+const displayCount = ref(pageSize)
 
 onMounted(async () => {
   try {
@@ -16,9 +18,21 @@ onMounted(async () => {
   }
 })
 
-const filteredItems = () => {
+const filteredItems = computed(() => {
   if (activeStatus.value === 'all') return items.value
   return items.value.filter(item => item.status === activeStatus.value)
+})
+
+const displayedItems = computed(() => {
+  return filteredItems.value.slice(0, displayCount.value)
+})
+
+const hasMore = computed(() => {
+  return displayCount.value < filteredItems.value.length
+})
+
+const loadMore = () => {
+  displayCount.value += pageSize
 }
 </script>
 
@@ -33,8 +47,11 @@ const filteredItems = () => {
       <span class="status" :class="{ active: activeStatus === 'done' }" @click="activeStatus = 'done'">已完成</span>
     </div>
 
-    <div v-if="filteredItems().length > 0" class="errand-list">
-      <ErrandCard v-for="item in filteredItems()" :key="item.id" :item="item" />
+    <div v-if="filteredItems.length > 0">
+      <div class="errand-list">
+        <ErrandCard v-for="item in displayedItems" :key="item.id" :item="item" />
+      </div>
+      <div v-if="hasMore" class="load-more" @click="loadMore">加载更多</div>
     </div>
     <EmptyState v-else text="暂无跑腿委托信息" />
   </div>
@@ -43,6 +60,8 @@ const filteredItems = () => {
 <style scoped>
 .errand-view {
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 h2 {
@@ -79,5 +98,18 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.load-more {
+  text-align: center;
+  padding: 14px;
+  color: #e8689c;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.load-more:hover {
+  color: #ff9aaf;
 }
 </style>
