@@ -139,6 +139,18 @@
       "targetUser": "本人",
       "status": "open",
       "description": "挂有小熊挂件，捡到必有酬谢。"
+    },
+    {
+      "title": "捡到一副耳机",
+      "type": "found",
+      "itemName": "耳机",
+      "location": "东四",
+      "eventTime": "2026-06-23 16:22",
+      "contact": "校园用户",
+      "targetUser": "待确认",
+      "status": "open",
+      "description": "蓝色的耳机",
+      "id": "y37Ktv9JYnc"
     }
   ],
   "groupBuys": [
