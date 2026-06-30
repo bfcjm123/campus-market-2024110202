@@ -9,7 +9,7 @@ const item = ref<LostFound | null>(null)
 
 onMounted(async () => {
   try {
-    const id = Number(route.params.id)
+    const id = route.params.id as string
     item.value = await getLostFoundById(id)
   } catch (error) {
     console.error('获取详情失败:', error)
