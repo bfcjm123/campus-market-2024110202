@@ -1,15 +1,28 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import type { Trade } from '@/api/trade'
+import { useFavoriteStore } from '@/stores/favorite'
 
 const props = defineProps<{
   trade: Trade
 }>()
 
 const router = useRouter()
+const favoriteStore = useFavoriteStore()
 
 const goToDetail = () => {
   router.push(`/trade/${props.trade.id}`)
+}
+
+const handleFavorite = (e: Event) => {
+  e.stopPropagation()
+  favoriteStore.toggleFavorite({
+    type: 'trade',
+    id: props.trade.id,
+    title: props.trade.title,
+    description: props.trade.description,
+    location: props.trade.location,
+  })
 }
 
 const getStatusText = (status: string) => {
@@ -47,6 +60,9 @@ const getStatusText = (status: string) => {
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           {{ trade.location }}
         </span>
+        <button class="fav-btn" :class="{ active: favoriteStore.isFavorite('trade', trade.id) }" @click="handleFavorite">
+          {{ favoriteStore.isFavorite('trade', trade.id) ? '已收藏' : '收藏' }}
+        </button>
       </div>
     </div>
   </div>
@@ -134,6 +150,7 @@ const getStatusText = (status: string) => {
 .trade-footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 12px;
   color: #bbb;
   margin-top: auto;
@@ -143,5 +160,26 @@ const getStatusText = (status: string) => {
   display: flex;
   align-items: center;
   gap: 3px;
+}
+
+.fav-btn {
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid #ffb6c1;
+  background: #fff;
+  color: #ffb6c1;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fav-btn:hover {
+  background: #fff0f3;
+}
+
+.fav-btn.active {
+  background: #ffb6c1;
+  color: #fff;
+  border-color: #ffb6c1;
 }
 </style>

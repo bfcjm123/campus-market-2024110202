@@ -77,6 +77,19 @@
       "status": "open",
       "description": "不需要了",
       "id": "E0pzEVb4nIg"
+    },
+    {
+      "title": "出小卡",
+      "price": 65,
+      "category": "生活用品",
+      "condition": "九成新",
+      "publisher": "张小明",
+      "publishTime": "2026-07-01 10:19",
+      "location": "东四楼下",
+      "image": "",
+      "status": "open",
+      "description": "出卡回血，小卡无暇",
+      "id": "E8I4QwiAUM0"
     }
   ],
   "lostFounds": [

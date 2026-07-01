@@ -1,15 +1,28 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import type { LostFound } from '@/api/lostFound'
+import { useFavoriteStore } from '@/stores/favorite'
 
 const props = defineProps<{
   item: LostFound
 }>()
 
 const router = useRouter()
+const favoriteStore = useFavoriteStore()
 
 const goToDetail = () => {
   router.push(`/lost-found/${props.item.id}`)
+}
+
+const handleFavorite = (e: Event) => {
+  e.stopPropagation()
+  favoriteStore.toggleFavorite({
+    type: 'lostFound',
+    id: props.item.id,
+    title: props.item.title,
+    description: props.item.description,
+    location: props.item.location,
+  })
 }
 
 const getStatusText = (status: string) => {
@@ -43,6 +56,9 @@ const getStatusText = (status: string) => {
       <div class="item-footer">
         <span class="tag" :class="item.status">{{ getStatusText(item.status) }}</span>
         <span class="info">{{ item.contact }}</span>
+        <button class="fav-btn" :class="{ active: favoriteStore.isFavorite('lostFound', item.id) }" @click="handleFavorite">
+          {{ favoriteStore.isFavorite('lostFound', item.id) ? '已收藏' : '收藏' }}
+        </button>
       </div>
     </div>
   </div>
@@ -136,5 +152,26 @@ const getStatusText = (status: string) => {
 .tag.closed {
   background: #f5f5f5;
   color: #999;
+}
+
+.fav-btn {
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid #ffb6c1;
+  background: #fff;
+  color: #ffb6c1;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fav-btn:hover {
+  background: #fff0f3;
+}
+
+.fav-btn.active {
+  background: #ffb6c1;
+  color: #fff;
+  border-color: #ffb6c1;
 }
 </style>

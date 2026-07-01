@@ -6,8 +6,10 @@ import { createTrade } from '@/api/trade'
 import { createLostFound } from '@/api/lostFound'
 import { createGroupBuy } from '@/api/groupBuy'
 import { createErrand } from '@/api/errand'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 // 发布类型
 const publishType = ref<'trades' | 'lostFounds' | 'groupBuys' | 'errands'>('trades')
@@ -169,7 +171,7 @@ const handleSubmit = async () => {
         price: Number(form.price),
         category: form.category,
         condition: form.condition,
-        publisher: '校园用户',
+        publisher: userStore.user.name,
         publishTime: now,
         location: form.location,
         image: '',
@@ -188,7 +190,7 @@ const handleSubmit = async () => {
         itemName: form.itemName,
         location: form.location,
         eventTime: formatTime(form.eventTime),
-        contact: '校园用户',
+        contact: userStore.user.name,
         targetUser: '待确认',
         status: 'open',
         description: form.description,
@@ -206,7 +208,7 @@ const handleSubmit = async () => {
         currentCount: 1,
         deadline: formatTime(form.deadline),
         location: form.location,
-        publisher: '校园用户',
+        publisher: userStore.user.name,
         status: 'open',
         description: form.description,
       })
@@ -223,7 +225,7 @@ const handleSubmit = async () => {
         from: form.from,
         to: form.to,
         deadline: formatTime(form.deadline),
-        publisher: '校园用户',
+        publisher: userStore.user.name,
         status: 'open',
         description: form.description,
       })

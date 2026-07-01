@@ -1,15 +1,28 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import type { Errand } from '@/api/errand'
+import { useFavoriteStore } from '@/stores/favorite'
 
 const props = defineProps<{
   item: Errand
 }>()
 
 const router = useRouter()
+const favoriteStore = useFavoriteStore()
 
 const goToDetail = () => {
   router.push(`/errand/${props.item.id}`)
+}
+
+const handleFavorite = (e: Event) => {
+  e.stopPropagation()
+  favoriteStore.toggleFavorite({
+    type: 'errand',
+    id: props.item.id,
+    title: props.item.title,
+    description: props.item.description,
+    location: props.item.from,
+  })
 }
 
 const getStatusText = (status: string) => {
@@ -47,6 +60,9 @@ const getStatusText = (status: string) => {
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         {{ item.deadline }}
       </span>
+      <button class="fav-btn" :class="{ active: favoriteStore.isFavorite('errand', item.id) }" @click="handleFavorite">
+        {{ favoriteStore.isFavorite('errand', item.id) ? '已收藏' : '收藏' }}
+      </button>
     </div>
   </div>
 </template>
@@ -137,5 +153,26 @@ const getStatusText = (status: string) => {
   display: flex;
   align-items: center;
   gap: 3px;
+}
+
+.fav-btn {
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid #ffb6c1;
+  background: #fff;
+  color: #ffb6c1;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fav-btn:hover {
+  background: #fff0f3;
+}
+
+.fav-btn.active {
+  background: #ffb6c1;
+  color: #fff;
+  border-color: #ffb6c1;
 }
 </style>
