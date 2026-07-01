@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useFavoriteStore } from '@/stores/favorite'
 import EmptyState from '@/components/EmptyState.vue'
@@ -10,6 +11,7 @@ import { getErrands, type Errand } from '@/api/errand'
 
 const userStore = useUserStore()
 const favoriteStore = useFavoriteStore()
+const router = useRouter()
 
 const myTrades = ref<Trade[]>([])
 const myLostFounds = ref<LostFound[]>([])
@@ -23,6 +25,13 @@ const typeNameMap: Record<string, string> = {
   lostFound: '失物招领',
   groupBuy: '拼单搭子',
   errand: '跑腿委托',
+}
+
+const typeRouteMap: Record<string, string> = {
+  trade: '/trade',
+  lostFound: '/lost-found',
+  groupBuy: '/group-buy',
+  errand: '/errand',
 }
 
 onMounted(async () => {
@@ -47,6 +56,14 @@ onMounted(async () => {
 
 const totalPublish = () => {
   return myTrades.value.length + myLostFounds.value.length + myGroupBuys.value.length + myErrands.value.length
+}
+
+const goToFavDetail = (type: string, id: string | number) => {
+  router.push(`${typeRouteMap[type]}/${id}`)
+}
+
+const goToPubDetail = (type: string, id: string | number) => {
+  router.push(`${typeRouteMap[type]}/${id}`)
 }
 </script>
 
@@ -107,13 +124,13 @@ const totalPublish = () => {
         <EmptyState text="暂无收藏内容" />
       </div>
       <div v-else class="fav-list">
-        <div v-for="(item, index) in favoriteStore.favorites" :key="index" class="fav-item">
+        <div v-for="(item, index) in favoriteStore.favorites" :key="index" class="fav-item" @click="goToFavDetail(item.type, item.id)">
           <div class="fav-info">
             <span class="fav-type">{{ typeNameMap[item.type] }}</span>
             <span class="fav-title">{{ item.title }}</span>
             <span class="fav-desc">{{ item.description }}</span>
           </div>
-          <button class="remove-btn" @click="favoriteStore.removeFavorite(item.type, item.id)">取消收藏</button>
+          <button class="remove-btn" @click.stop="favoriteStore.removeFavorite(item.type, item.id)">取消收藏</button>
         </div>
       </div>
     </div>
@@ -129,30 +146,34 @@ const totalPublish = () => {
       </div>
       <div v-else class="publish-list">
         <!-- 二手交易 -->
-        <div v-for="item in myTrades" :key="'trade-' + item.id" class="publish-item">
+        <div v-for="item in myTrades" :key="'trade-' + item.id" class="publish-item" @click="goToPubDetail('trade', item.id)">
           <span class="pub-type">二手交易</span>
           <span class="pub-title">{{ item.title }}</span>
           <span class="pub-price">¥{{ item.price }}</span>
           <span class="pub-status">{{ item.status }}</span>
+          <svg class="pub-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <!-- 失物招领 -->
-        <div v-for="item in myLostFounds" :key="'lf-' + item.id" class="publish-item">
+        <div v-for="item in myLostFounds" :key="'lf-' + item.id" class="publish-item" @click="goToPubDetail('lostFound', item.id)">
           <span class="pub-type">失物招领</span>
           <span class="pub-title">{{ item.title }}</span>
           <span class="pub-status">{{ item.status }}</span>
+          <svg class="pub-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <!-- 拼单搭子 -->
-        <div v-for="item in myGroupBuys" :key="'gb-' + item.id" class="publish-item">
+        <div v-for="item in myGroupBuys" :key="'gb-' + item.id" class="publish-item" @click="goToPubDetail('groupBuy', item.id)">
           <span class="pub-type">拼单搭子</span>
           <span class="pub-title">{{ item.title }}</span>
           <span class="pub-status">{{ item.status }}</span>
+          <svg class="pub-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <!-- 跑腿委托 -->
-        <div v-for="item in myErrands" :key="'er-' + item.id" class="publish-item">
+        <div v-for="item in myErrands" :key="'er-' + item.id" class="publish-item" @click="goToPubDetail('errand', item.id)">
           <span class="pub-type">跑腿委托</span>
           <span class="pub-title">{{ item.title }}</span>
           <span class="pub-price">¥{{ item.reward }}</span>
           <span class="pub-status">{{ item.status }}</span>
+          <svg class="pub-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
     </div>
@@ -290,6 +311,12 @@ const totalPublish = () => {
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #f9f9f9;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fav-item:hover {
+  background: #fef8f9;
 }
 
 .fav-item:last-child {
@@ -353,6 +380,12 @@ const totalPublish = () => {
   gap: 8px;
   padding: 10px 0;
   border-bottom: 1px solid #f9f9f9;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.publish-item:hover {
+  background: #fef8f9;
 }
 
 .publish-item:last-child {
@@ -391,5 +424,10 @@ const totalPublish = () => {
   background: #f5f5f5;
   color: #999;
   flex-shrink: 0;
+}
+
+.pub-arrow {
+  flex-shrink: 0;
+  margin-left: auto;
 }
 </style>
